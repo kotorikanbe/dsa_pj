@@ -17,6 +17,7 @@ int main()
     soldiers->addSoldier(ARCHER, sf::Vector2u(2, 0), left);
     soldiers->addSoldier(CASTER, sf::Vector2u(3, 0), up);
     soldiers->addSoldier(BERSERKER, sf::Vector2u(4, 0), right);
+    soldiers->moveSoldier(sf::Vector2u(0, 0), down, 5);
     // run the main loop
     while (window.isOpen()) {
         // handle events
@@ -32,6 +33,7 @@ int main()
         window.draw(*map);
         window.draw(*soldiers);
         window.display();
+        sf::sleep(sf::milliseconds(50));
     }
 
     return 0;
