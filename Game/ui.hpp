@@ -63,7 +63,7 @@ public:
         value.setStyle(sf::Text::Bold);
         value.setPosition(sf::Vector2f(1520, 700 + down_length));
         button_shape.setSize(sf::Vector2f(220, 120));
-        button_shape.setFillColor(sf::Color::Green);
+        button_shape.setFillColor(sf::Color(0xf4, 0xf1, 0xb9));
         button_shape.setOrigin(button_shape.getLocalBounds().width / 2, button_shape.getLocalBounds().height / 2);
         button_shape.setPosition(sf::Vector2f(1520, 500 + down_length));
     }

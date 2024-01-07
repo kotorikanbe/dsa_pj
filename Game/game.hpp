@@ -32,26 +32,37 @@ public:
         , mouse_thread(&Game::handle_mouse, this)
         , shade(new Shade(*red_soldier))
         , ui(new Ui)
+        , value(5)
 
     {
         map = Map::getInstance();
         map->load();
         state = Regular;
     }
+    ~Game()
+    {
+        delete blue_soldier;
+        delete red_soldier;
+        delete shade;
+        delete ui;
+    }
     void render()
     {
         window.setActive(true);
-        window.clear();
-        blue_soldier->update();
-        red_soldier->update();
-        shade->update();
-        window.draw(*map);
-        window.draw(*blue_soldier);
-        window.draw(*red_soldier);
-        window.draw(*shade);
-        window.draw(*ui);
-        window.display();
-        sf::sleep(sf::milliseconds(50));
+        while (1) {
+            window.clear();
+            blue_soldier->update();
+            red_soldier->update();
+            shade->update();
+            ui->update(value);
+            window.draw(*map);
+            window.draw(*blue_soldier);
+            window.draw(*red_soldier);
+            window.draw(*shade);
+            window.draw(*ui);
+            window.display();
+            sf::sleep(sf::milliseconds(50));
+        }
     }
     void run()
     {

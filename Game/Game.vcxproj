@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="components.hpp" />
     <ClInclude Include="game.hpp" />
     <ClInclude Include="map.hpp" />
     <ClInclude Include="shade.hpp" />

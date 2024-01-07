@@ -1,10 +1,8 @@
 #pragma once
-#include "map.hpp"
 #include "soldier.hpp"
 #include <array>
 class Shade : public sf::Drawable, public sf::Transformable {
 private:
-    std::array<std::array<Map_node, 30>, 40>& map;
     std::vector<Soldier*>& soldiers;
     std::array<std::array<int, 30>, 40> shade; // 0 is not shade, 1 is shade
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -23,8 +21,8 @@ private:
 
 public:
     Shade(Soldier_entity& lhs)
-        : map(Map::getInstance()->getData())
-        , soldiers(lhs.soldiers)
+        : 
+         soldiers(lhs.soldiers)
     {
         for (int i = 0; i < 40; i++) {
             for (int j = 0; j < 30; j++) {

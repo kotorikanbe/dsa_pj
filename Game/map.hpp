@@ -13,15 +13,26 @@ private:
     sf::Vector2u position;
 
 public:
-    Map_node()
-        : position(sf::Vector2u(0, 0))
-        , isBarrier(false)
-    {
-    }
-    Map_node(sf::Vector2u pos, bool isbarrier = false)
+    Map_node(sf::Vector2u pos, int label)
         : position(pos)
-        , isBarrier(isbarrier)
     {
+        switch (label) {
+        case 16:
+            isBarrier = true;
+            break;
+        case 165:
+            isBarrier = true;
+            break;
+        case 328:
+            isBarrier = true;
+            break;
+        case 372:
+            isBarrier = true;
+            break;
+        default:
+            isBarrier = false;
+            break;
+        }
     }
     bool getBarrier() { return isBarrier; }
     sf::Vector2u getPosition() { return position; }
