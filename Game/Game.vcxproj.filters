@@ -20,10 +20,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="soldier.hpp">
+    <ClInclude Include="soldier_base.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="map.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="soldier.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

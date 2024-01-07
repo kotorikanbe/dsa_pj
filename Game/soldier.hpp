@@ -1,282 +1,86 @@
 #pragma once
-#include <SFML/System/Vector2.hpp>
-enum Direction {
-    up,
-    down,
-    left,
-    right
-};
-enum Order {
-    INFANTRY,
-    CASTER,
-    BERSERKER,
-    ARCHER,
-    KNIGHT
-};
-class Soldier {
-private
-    :
-    int health;
-    int damage;
-    int range;
-    int view;
-    int defense_p; // physical defense is percentage
-    int defense_m; // magical defense is percentage
-    sf::Vector2u position;
-    bool ismoving;
-    bool isattacking;
-    bool isdead;
-    bool isunderattack;
-    int cost;
-    Order label;
-
-public:
-    Soldier(sf::Vector2u position, int health, int damage, int range, int view, int defense_p, int defense_m, int cost, Order label)
-        : health(health)
-        , damage(damage)
-        , range(range)
-        , view(view)
-        , defense_p(defense_p)
-        , defense_m(defense_m)
-        , position(position)
-        , cost(cost)
-        , label(label)
-
-    {
-        ismoving = false;
-        isattacking = false;
-        isdead = false;
-        isunderattack = false;
-    }
-    ~Soldier() = default;
-    int getHealth()
-    {
-        return health;
-    }
-    int getDamage()
-    {
-        return damage;
-    }
-    int getRange()
-    {
-        return range;
-    }
-    int getView()
-    {
-        return view;
-    }
-    int getDefense_p()
-    {
-        return defense_p;
-    }
-    int getDefense_m()
-    {
-        return defense_m;
-    }
-    sf::Vector2u getPosition()
-    {
-        return position;
-    }
-    bool getIsMoving()
-    {
-        return ismoving;
-    }
-    bool getIsAttacking()
-    {
-        return isattacking;
-    }
-    bool getIsDead()
-    {
-        return isdead;
-    }
-    bool getIsUnderAttack()
-    {
-        return isunderattack;
-    }
-    int getCost()
-    {
-        return cost;
-    }
-    void setHealth(int health)
-    {
-        this->health = health;
-    }
-    void setDamage(int damage)
-    {
-        this->damage = damage;
-    }
-    void setRange(int range)
-    {
-        this->range = range;
-    }
-    void setView(int view)
-    {
-        this->view = view;
-    }
-    void setDefense_p(int defense_p)
-    {
-        this->defense_p = defense_p;
-    }
-    void setDefense_m(int defense_m)
-    {
-        this->defense_m = defense_m;
-    }
-    void setPosition(sf::Vector2u position)
-    {
-        this->position = position;
-    }
-    void setIsMoving(bool ismoving)
-    {
-        this->ismoving = ismoving;
-    }
-    void setIsAttacking(bool isattacking)
-    {
-        this->isattacking = isattacking;
-    }
-    void setIsDead(bool isdead)
-    {
-        this->isdead = isdead;
-    }
-    void setIsUnderAttack(bool isunderattack)
-    {
-        this->isunderattack = isunderattack;
-    }
-    virtual void move(int steps, Direction direction)
-    {
-        this->setIsMoving(true);
-        switch (direction) {
-        case up:
-            this->position.y -= steps;
-            break;
-        case down:
-            this->position.y += steps;
-            break;
-        case left:
-            this->position.x -= steps;
-            break;
-        case right:
-            this->position.x += steps;
-            break;
-        default:
-            break;
-        }
-    }
-    virtual void attack(Soldier& enemy) = 0;
-};
-class Infantry : public Soldier {
-public:
-    Infantry(sf::Vector2u position, int health = 1000, int damage = 325, int range = 1, int view = 5, int defense_p = 50, int defense_m = 30, int cost = 1, Order label = INFANTRY)
-        : Soldier(position, health, damage, range, view, defense_p, defense_m, cost, label)
-    {
-    }
-    ~Infantry() = default;
-    void attack(Soldier& enemy) override
-    {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
-        }
-    }
-};
-class Caster : public Soldier {
-public:
-    Caster(sf::Vector2u position, int health = 700, int damage = 425, int range = 5, int view = 5, int defense_p = 20, int defense_m = 60, int cost = 2, Order label = CASTER)
-        : Soldier(position, health, damage, range, view, defense_p, defense_m, cost, label)
-    {
-    }
-    ~Caster() = default;
-    void attack(Soldier& enemy) override
-    {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
-        }
-    }
-};
-class Berserker : public Soldier {
-public:
-    Berserker(sf::Vector2u position, int health = 1500, int damage = 500, int range = 1, int view = 4, int defense_p = 30, int defense_m = 10, int cost = 3, Order label = BERSERKER)
-        : Soldier(position, health, damage, range, view, defense_p, defense_m, cost, label)
-    {
-    }
-    ~Berserker() = default;
-    void attack(Soldier& enemy) override
-    {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
-        }
-    }
-};
-class Archer : public Soldier {
-public:
-    Archer(sf::Vector2u position, int health = 850, int damage = 300, int range = 6, int view = 8, int defense_p = 40, int defense_m = 30, int cost = 2, Order label = ARCHER)
-        : Soldier(position, health, damage, range, view, defense_p, defense_m, cost, label)
-    {
-    }
-    ~Archer() = default;
-    void attack(Soldier& enemy) override
-    {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
-        }
-    }
-};
-class Knight : public Soldier {
-public:
-    Knight(sf::Vector2u position, int health = 1600, int damage = 400, int range = 2, int view = 6, int defense_p = 60, int defense_m = 60, int cost = 6, Order label = KNIGHT)
-        : Soldier(position, health, damage, range, view, defense_p, defense_m, cost, label)
-    {
-    }
-    ~Knight() = default;
-    void attack(Soldier& enemy) override
-    {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
-        }
-    }
-};
-// SINGLETON
-class Factory {
-public:
-    static Factory* getInstance()
-    {
-        static Factory* instance;
-        if (instance == nullptr) {
-            instance = new Factory();
-        }
-        return instance;
-    }
-    Soldier* createSoldier(Order label, sf::Vector2u position)
-    {
-        switch (label) {
-        case INFANTRY:
-            return new Infantry(position);
-        case CASTER:
-            return new Caster(position);
-        case BERSERKER:
-            return new Berserker(position);
-        case ARCHER:
-            return new Archer(position);
-        case KNIGHT:
-            return new Knight(position);
-        default:
-            return nullptr;
-        }
-    }
-
+#include "soldier_base.hpp"
+#include <SFML/Graphics.hpp>
+#include <algorithm>
+#include <vector>
+class Soldier_entity : public sf::Drawable, public sf::Transformable {
 private:
-    Factory() = default;
+    Factory* factory;
+    std::vector<Soldier*> soldiers;
+    sf::Texture T_soldiers;
+    sf::VertexArray m_vertices;
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        // apply the transform
+        states.transform *= getTransform();
+
+        // apply the tileset texture
+        states.texture = &T_soldiers;
+
+        // draw the vertex array
+        target.draw(m_vertices, states);
+    }
+    bool changeSoldier(sf::Vector2u position, Direction direction, int phase)
+    {
+        auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
+        if (found == soldiers.end()) {
+            return false;
+        } else {
+            (*found)->setDirection(direction);
+            (*found)->setPhase(phase);
+            return true;
+        }
+    }
+
+public:
+    void update()
+    {
+        m_vertices.clear();
+        m_vertices.resize(500 * 6);
+        for (auto i : soldiers) {
+            if (!i->getIsDead()) {
+                sf::Vector2u position = i->getPosition();
+                sf::Vertex triangles[6];
+                triangles[0].position = sf::Vector2f(position.x * 32, position.y * 32);
+                triangles[1].position = sf::Vector2f(position.x * 32 + 32, position.y * 32);
+                triangles[2].position = sf::Vector2f(position.x * 32, position.y * 32 + 32);
+                triangles[3].position = sf::Vector2f(position.x * 32, position.y * 32 + 32);
+                triangles[4].position = sf::Vector2f(position.x * 32 + 32, position.y * 32);
+                triangles[5].position = sf::Vector2f(position.x * 32 + 32, position.y * 32 + 32);
+                int label = static_cast<int>(i->getLabel());
+                int phase = i->getPhase();
+                int direction = static_cast<int>(i->getDirection());
+                triangles[0].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64);
+                triangles[1].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64);
+                triangles[2].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64 + 64);
+                triangles[3].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64 + 64);
+                triangles[4].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64);
+                triangles[5].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64 + 64);
+                m_vertices.append(triangles[0]);
+                m_vertices.append(triangles[1]);
+                m_vertices.append(triangles[2]);
+                m_vertices.append(triangles[3]);
+                m_vertices.append(triangles[4]);
+                m_vertices.append(triangles[5]);
+            }
+        }
+    }
+    Soldier_entity()
+    {
+        factory = Factory::getInstance();
+        T_soldiers.loadFromFile("soldiers.png");
+        m_vertices.setPrimitiveType(sf::Triangles);
+    }
+    ~Soldier_entity()
+    {
+        for (auto i : soldiers) {
+            delete i;
+        }
+    }
+
+    void addSoldier(Order label, sf::Vector2u position, Direction direction)
+    {
+        soldiers.push_back(factory->createSoldier(label, position, direction));
+    }
 };

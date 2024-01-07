@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="map.hpp" />
     <ClInclude Include="soldier.hpp" />
+    <ClInclude Include="soldier_base.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="map.png" />

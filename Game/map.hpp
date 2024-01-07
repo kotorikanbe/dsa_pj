@@ -1,14 +1,43 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <array>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
 
+class Map_node {
+private:
+    bool isBarrier;
+    sf::Vector2u position;
+
+public:
+    Map_node()
+        : position(sf::Vector2u(0, 0))
+        , isBarrier(false)
+    {
+    }
+    Map_node(sf::Vector2u pos, bool isbarrier = false)
+        : position(pos)
+        , isBarrier(isbarrier)
+    {
+    }
+    bool getBarrier() { return isBarrier; }
+    sf::Vector2u getPosition() { return position; }
+};
+// singleton
 class Map : public sf::Drawable, public sf::Transformable {
 public:
-    bool load(sf::Vector2u tileSize = sf::Vector2u(32, 32), const unsigned int width = 40, const unsigned int height = 30)
+    static Map* getInstance()
+    {
+        static Map* instance;
+        if (instance == nullptr) {
+            instance = new Map();
+        }
+        return instance;
+    }
+    static bool load(sf::Vector2u tileSize = sf::Vector2u(32, 32), const unsigned int width = 40, const unsigned int height = 30)
     {
         // load the tileset texture
         if (!m_tileset.loadFromFile("map.png"))
@@ -50,14 +79,22 @@ public:
         if (!base_blue.loadFromFile("base_blue.png"))
             return false;
         if (!base_red.loadFromFile("base_red.png"))
-            return true;
+            return false;
         m_sprite_blue.setTexture(base_blue);
         m_sprite_red.setTexture(base_red);
         m_sprite_red.setPosition(sf::Vector2f(0.0, 416.0));
         m_sprite_blue.setPosition(sf::Vector2f(1184.0, 416.0));
     }
+    static std::array<std::array<Map_node, 30>, 40>& getData()
+    {
+        return data;
+    }
 
 private:
+    Map()
+    {
+        this->load();
+    }
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         // apply the transform
@@ -71,10 +108,11 @@ private:
         target.draw(m_sprite_blue);
         target.draw(m_sprite_red);
     }
-    void getMap(std::vector<int>& number)
+    static void getMap(std::vector<int>& number)
     {
         std::ifstream file("map.txt"); // 替换为你的文件名
-
+        int x = 0;
+        int y = 0;
         if (file.is_open()) {
             std::string line;
             while (std::getline(file, line)) {
@@ -82,15 +120,28 @@ private:
                 std::string num;
                 while (std::getline(ss, num, ',')) {
                     number.push_back(std::stoi(num));
+                    data[x][y] = Map_node(sf::Vector2u(x, y), std::stoi(num));
+                    x++;
                 }
+                x = 0;
+                y++;
             }
             file.close();
         } else {
             std::cout << "无法打开文件" << std::endl;
         }
     }
-    std::vector<int> tiles;
-    sf::VertexArray m_vertices;
-    sf::Sprite m_sprite_blue, m_sprite_red;
-    sf::Texture m_tileset, base_blue, base_red;
+    static std::vector<int> tiles;
+    static std::array<std::array<Map_node, 30>, 40> data;
+    static sf::VertexArray m_vertices;
+    static sf::Sprite m_sprite_blue, m_sprite_red;
+    static sf::Texture m_tileset, base_blue, base_red;
 };
+std::vector<int> Map::tiles;
+std::array<std::array<Map_node, 30>, 40> Map::data;
+sf::VertexArray Map::m_vertices;
+sf::Sprite Map::m_sprite_blue;
+sf::Sprite Map::m_sprite_red;
+sf::Texture Map::m_tileset;
+sf::Texture Map::base_blue;
+sf::Texture Map::base_red;
