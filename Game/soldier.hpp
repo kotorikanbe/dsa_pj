@@ -6,14 +6,15 @@
 class Soldier_entity : public sf::Drawable, public sf::Transformable {
 private:
     Factory* factory;
-    std::vector<Soldier*> soldiers;
     sf::Texture T_soldiers;
+    std::vector<sf::RectangleShape> m_shapes;
     sf::VertexArray m_vertices;
     std::vector<Soldier*>::iterator soldier_m;
     Direction direction_m;
     int steps_m;
     bool isMoving;
     int count_m;
+    uint8_t team; // 0 is red 1 is blue
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         // apply the transform
@@ -24,6 +25,9 @@ private:
 
         // draw the vertex array
         target.draw(m_vertices, states);
+        for (sf::RectangleShape i : m_shapes) {
+            target.draw(i);
+        }
     }
     bool changeSoldier(sf::Vector2u position, Direction direction, int phase)
     {
@@ -36,12 +40,36 @@ private:
             return true;
         }
     }
+    int getMaxhealth(Order label)
+    {
+        switch (label) {
+        case INFANTRY:
+            return 1000;
+            break;
+        case CASTER:
+            return 700;
+            break;
+        case BERSERKER:
+            return 1500;
+            break;
+        case ARCHER:
+            return 850;
+            break;
+        case KNIGHT:
+            return 1600;
+            break;
+        default:
+            return 0;
+            break;
+        }
+    }
 
 public:
     void update()
     {
         m_vertices.clear();
         m_vertices.resize(500 * 6);
+        m_shapes.clear();
         for (auto i : soldiers) {
             if (!i->getIsDead()) {
                 sf::Vector2u position = i->getPosition();
@@ -65,6 +93,10 @@ public:
                         break;
                     }
                     double tmp = static_cast<double>(count_m) / 100.0 * static_cast<double>(steps_m) * 32.0;
+                    sf::RectangleShape shape(sf::Vector2f(32.0 * static_cast<double>(i->getHealth()) / static_cast<double>(getMaxhealth(i->getLabel())), 2.0));
+                    shape.setFillColor(team ? sf::Color::Blue : sf::Color::Red);
+                    shape.setPosition(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
+                    m_shapes.push_back(shape);
                     triangles[0].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
                     triangles[1].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp + 32, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
                     triangles[2].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp + 32);
@@ -86,8 +118,13 @@ public:
                         isMoving = false;
                         i->move(steps_m, direction_m);
                         count_m = 0;
+                        i->setIsMoving(false);
                     }
                 } else {
+                    sf::RectangleShape shape(sf::Vector2f(32.0 * static_cast<double>(i->getHealth()) / static_cast<double>(getMaxhealth(i->getLabel())), 2.0));
+                    shape.setFillColor(team ? sf::Color::Blue : sf::Color::Red);
+                    shape.setPosition(position.x * 32, position.y * 32);
+                    m_shapes.push_back(shape);
                     triangles[0].position = sf::Vector2f(position.x * 32, position.y * 32);
                     triangles[1].position = sf::Vector2f(position.x * 32 + 32, position.y * 32);
                     triangles[2].position = sf::Vector2f(position.x * 32, position.y * 32 + 32);
@@ -113,7 +150,7 @@ public:
             }
         }
     }
-    Soldier_entity()
+    Soldier_entity(uint8_t team)
     {
         factory = Factory::getInstance();
         T_soldiers.loadFromFile("soldiers.png");
@@ -122,6 +159,7 @@ public:
         direction_m = right;
         steps_m = 0;
         count_m = 0;
+        this->team = team;
     }
     ~Soldier_entity()
     {
@@ -136,13 +174,24 @@ public:
             isMoving = true;
             soldier_m = found;
             (*found)->setDirection(direction);
+            (*found)->setIsMoving(true);
             direction_m = direction;
             steps_m = steps;
             count_m = 0;
+        }
+    }
+    bool getIsmoving(sf::Vector2u position)
+    {
+        auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
+        if (found != soldiers.end()) {
+            return (*found)->getIsMoving();
+        } else {
+            return false;
         }
     }
     void addSoldier(Order label, sf::Vector2u position, Direction direction)
     {
         soldiers.push_back(factory->createSoldier(label, position, direction));
     }
+    std::vector<Soldier*> soldiers;
 };

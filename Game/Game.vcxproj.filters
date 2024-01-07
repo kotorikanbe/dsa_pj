@@ -29,6 +29,12 @@
     <ClInclude Include="soldier.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="game.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="shade.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="map.png">

@@ -172,7 +172,7 @@ public:
     }
     virtual void move(int steps, Direction direction)
     {
-        this->setIsMoving(true);
+
         switch (direction) {
         case up:
             this->position.y -= steps;
