@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="map.hpp" />
     <ClInclude Include="soldier.hpp" />
   </ItemGroup>
   <ItemGroup>
