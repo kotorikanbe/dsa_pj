@@ -163,6 +163,7 @@
     <ClInclude Include="shade.hpp" />
     <ClInclude Include="soldier.hpp" />
     <ClInclude Include="soldier_base.hpp" />
+    <ClInclude Include="ui.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="map.png" />
