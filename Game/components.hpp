@@ -1,4 +1,5 @@
 #pragma once
+#include "castle.hpp"
 #include "game.hpp"
 #include "map.hpp"
 #include "soldier.hpp"
@@ -84,7 +85,7 @@ public:
                 int x = position.x;
                 int y = position.y;
                 for (int i = x - 1; i >= x - view; i--) {
-                    if (i != x) {
+                    /*if (i != x) {
                         if (i >= 0 && i <= 39) {
                             if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
                                 if (!enemy->findSoldier(sf::Vector2u(i, y))) {
@@ -102,10 +103,33 @@ public:
                                 }
                             }
                         }
+                    }*/
+                    if (i < 0 || i > 39) {
+                        break;
+                    }
+                    if (soldiers->findSoldier(sf::Vector2u(i, y))) {
+                        continue;
+                    }
+                    if (enemy->findSoldier(sf::Vector2u(i, y))) {
+                        Component component(sf::Vector2u(i, y), sf::Color::Red);
+                        under_components.push_back(component);
+                        continue;
+                    }
+                    if (map->isBarrier(sf::Vector2u(i, y))) {
+                        break;
+                    }
+                    if (Castle::whereCastle(sf::Vector2u(i, y), 1)) {
+                        Component component(sf::Vector2u(i, y), sf::Color(255, 0, 0, 100));
+                        under_components.push_back(component);
+                        break;
+                    }
+                    if (std::abs(i - x) <= move_step) {
+                        Component component(sf::Vector2u(i, y), sf::Color::Blue);
+                        under_components.push_back(component);
                     }
                 }
                 for (int i = x + 1; i <= x + view; i++) {
-                    if (i != x) {
+                    /*if (i != x) {
                         if (i >= 0 && i <= 39) {
                             if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
                                 if (!enemy->findSoldier(sf::Vector2u(i, y))) {
@@ -123,10 +147,33 @@ public:
                                 }
                             }
                         }
+                    }*/
+                    if (i < 0 || i > 39) {
+                        break;
+                    }
+                    if (soldiers->findSoldier(sf::Vector2u(i, y))) {
+                        continue;
+                    }
+                    if (enemy->findSoldier(sf::Vector2u(i, y))) {
+                        Component component(sf::Vector2u(i, y), sf::Color::Red);
+                        under_components.push_back(component);
+                        continue;
+                    }
+                    if (map->isBarrier(sf::Vector2u(i, y))) {
+                        break;
+                    }
+                    if (Castle::whereCastle(sf::Vector2u(i, y), 1)) {
+                        Component component(sf::Vector2u(i, y), sf::Color(255, 0, 0, 100));
+                        under_components.push_back(component);
+                        break;
+                    }
+                    if (std::abs(i - x) <= move_step) {
+                        Component component(sf::Vector2u(i, y), sf::Color::Blue);
+                        under_components.push_back(component);
                     }
                 }
                 for (int j = y - 1; j >= y - view; j--) {
-                    if (j != y) {
+                    /*if (j != y) {
                         if (j >= 0 && j <= 29) {
                             if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
                                 if (!enemy->findSoldier(sf::Vector2u(x, j))) {
@@ -144,10 +191,33 @@ public:
                                 }
                             }
                         }
+                    }*/
+                    if (j < 0 || j > 29) {
+                        break;
+                    }
+                    if (soldiers->findSoldier(sf::Vector2u(x, j))) {
+                        continue;
+                    }
+                    if (enemy->findSoldier(sf::Vector2u(x, j))) {
+                        Component component(sf::Vector2u(x, j), sf::Color::Red);
+                        under_components.push_back(component);
+                        continue;
+                    }
+                    if (map->isBarrier(sf::Vector2u(x, j))) {
+                        break;
+                    }
+                    if (Castle::whereCastle(sf::Vector2u(x, j), 1)) {
+                        Component component(sf::Vector2u(x, j), sf::Color(255, 0, 0, 100));
+                        under_components.push_back(component);
+                        break;
+                    }
+                    if (std::abs(j - y) <= move_step) {
+                        Component component(sf::Vector2u(x, j), sf::Color::Blue);
+                        under_components.push_back(component);
                     }
                 }
                 for (int j = y + 1; j <= y + view; j++) {
-                    if (j != y) {
+                    /*if (j != y) {
                         if (j >= 0 && j <= 29) {
                             if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
                                 if (!enemy->findSoldier(sf::Vector2u(x, j))) {
@@ -165,6 +235,29 @@ public:
                                 }
                             }
                         }
+                    }*/
+                    if (j < 0 || j > 29) {
+                        break;
+                    }
+                    if (soldiers->findSoldier(sf::Vector2u(x, j))) {
+                        continue;
+                    }
+                    if (enemy->findSoldier(sf::Vector2u(x, j))) {
+                        Component component(sf::Vector2u(x, j), sf::Color::Red);
+                        under_components.push_back(component);
+                        continue;
+                    }
+                    if (map->isBarrier(sf::Vector2u(x, j))) {
+                        break;
+                    }
+                    if (Castle::whereCastle(sf::Vector2u(x, j), 1)) {
+                        Component component(sf::Vector2u(x, j), sf::Color(255, 0, 0, 100));
+                        under_components.push_back(component);
+                        break;
+                    }
+                    if (std::abs(j - y) <= move_step) {
+                        Component component(sf::Vector2u(x, j), sf::Color::Blue);
+                        under_components.push_back(component);
                     }
                 }
             }
@@ -214,7 +307,7 @@ public:
     }
     static bool handleEvent(sf::Vector2i mousePosition)
     {
-        auto find_method = [&](Component& i) { return i.color != sf::Color::Red && sf::FloatRect(i.position.x * 32, i.position.y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
+        auto find_method = [&](Component& i) { return i.color != sf::Color::Red && i.color != sf::Color(255, 0, 0, 100) && sf::FloatRect(i.position.x * 32, i.position.y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
         auto found = std::find_if(under_components.begin(), under_components.end(), find_method);
         if (found != under_components.end()) {
             flag = (*found).position;
@@ -274,7 +367,7 @@ public:
     {
         up_components.clear();
         for (const Component& i : ref->under_components) {
-            if (i.rectangle.getFillColor() == sf::Color::Red) {
+            if (i.rectangle.getFillColor() == sf::Color::Red || i.rectangle.getFillColor() == sf::Color(255, 0, 0, 100)) {
                 sf::Vector2u tmp1 = soldier->getPosition();
                 sf::Vector2u tmp2 = i.position;
                 int range = soldier->getRange();

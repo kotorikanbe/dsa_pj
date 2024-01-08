@@ -32,7 +32,7 @@ public:
             isBarrier = true;
             break;
         case 372:
-            isBarrier = true;
+            isBarrier = false;
             break;
         default:
             isBarrier = false;

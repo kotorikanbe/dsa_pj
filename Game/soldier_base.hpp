@@ -32,6 +32,7 @@ private
     int phase; // 0-3 valid
     Order label;
     int move_step;
+    bool isCastle;
 
 public:
     static int getValue(Order label)
@@ -75,6 +76,7 @@ public:
         isattacked = false;
         isdead = false;
         isunderattack = false;
+        isCastle = false;
         move_step = view;
     }
     ~Soldier() = default;
@@ -121,6 +123,14 @@ public:
     bool getIsUnderAttack()
     {
         return isunderattack;
+    }
+    bool getIsCastle()
+    {
+        return isCastle;
+    }
+    void setIsCastle(bool isCastle)
+    {
+        this->isCastle = isCastle;
     }
     int getCost()
     {
@@ -255,7 +265,7 @@ public:
     void attack(Soldier& enemy) override
     {
         if (!this->getisattacked()) {
-            this->setisattacked(true);
+            // this->setisattacked(true);
             enemy.setIsUnderAttack(true);
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {
@@ -321,6 +331,7 @@ public:
         }
     }
 };
+
 // SINGLETON
 class Factory {
 public:

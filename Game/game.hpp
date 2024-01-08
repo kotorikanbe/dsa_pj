@@ -21,6 +21,8 @@ private:
     State state;
     Under_component* under;
     Up_component* up;
+    Castle *blue_castle, *red_castle;
+    Castle_blood *blue_blood, *red_blood;
 
 public:
     Game()
@@ -32,6 +34,8 @@ public:
         , shade(new Shade(*red_soldier))
         , ui(new Ui)
         , value(5)
+        , blue_castle(new Castle())
+        , red_castle(new Castle())
 
     {
         map = Map::getInstance();
@@ -39,6 +43,10 @@ public:
         this->state = State::Regular;
         under = Under_component::getInstance(red_soldier, blue_soldier);
         up = Up_component::getInstance(under);
+        blue_castle->setTeam(1);
+        red_castle->setTeam(0);
+        blue_blood = new Castle_blood(blue_castle);
+        red_blood = new Castle_blood(red_castle);
     }
     ~Game()
     {
@@ -68,6 +76,10 @@ public:
             window.draw(*shade);
             ui->update(value);
             window.draw(*ui);
+            blue_blood->update();
+            red_blood->update();
+            window.draw(*blue_blood);
+            window.draw(*red_blood);
             window.display();
             sf::sleep(sf::milliseconds(50));
         }
@@ -98,6 +110,7 @@ public:
     {
         // for test
         blue_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(1, 19), left);
+        red_soldier->addSoldier(Order::CASTER, sf::Vector2u(38, 18), right);
         while (1) {
             if (!mouse_event.empty()) {
                 sf::Vector2i now = mouse_event.front();
@@ -167,9 +180,13 @@ public:
                             } else if (up->handleEvent(now)) {
                                 Soldier* tmp = under->getSoldier();
                                 sf::Vector2u flag = up->getFlag();
-                                Soldier* attack_target;
-                                if (attack_target = blue_soldier->getSoldier(flag)) {
-                                    tmp->attack(*attack_target);
+                                if (Castle::whereCastle(flag, 1)) {
+                                    tmp->attack(*blue_castle);
+                                } else {
+                                    Soldier* attack_target;
+                                    if (attack_target = blue_soldier->getSoldier(flag)) {
+                                        tmp->attack(*attack_target);
+                                    }
                                 }
                                 state = State::Regular;
                             } else {
