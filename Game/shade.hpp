@@ -21,14 +21,13 @@ private:
 
 public:
     Shade(Soldier_entity& lhs)
-        : 
-         soldiers(lhs.soldiers)
+        : soldiers(lhs.soldiers)
     {
         for (int i = 0; i < 40; i++) {
             for (int j = 0; j < 30; j++) {
-                if (i <= 8 || i >= 31) {
+                if (i <= 8) {
                     shade[i][j] = 0;
-                } else if (i >= 18 && i <= 21 && j >= 0 && j <= 4) {
+                } /*else if (i >= 18 && i <= 21 && j >= 0 && j <= 4) {
                     shade[i][j] = 0;
                 } else if (i >= 18 && i <= 21 && j >= 8 && j <= 12) {
                     shade[i][j] = 0;
@@ -36,7 +35,8 @@ public:
                     shade[i][j] = 0;
                 } else if (i >= 18 && i <= 21 && j >= 26 && j <= 29) {
                     shade[i][j] = 0;
-                } else {
+                }*/
+                else {
                     shade[i][j] = 1;
                 }
             }

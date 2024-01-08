@@ -24,7 +24,7 @@ private
     int defense_m; // magical defense is percentage
     sf::Vector2u position;
     bool ismoving;
-    bool isattacking;
+    bool isattacked;
     bool isdead;
     bool isunderattack;
     int cost;
@@ -34,6 +34,29 @@ private
     int move_step;
 
 public:
+    static int getValue(Order label)
+    {
+        switch (label) {
+        case INFANTRY:
+            return 1;
+            break;
+        case CASTER:
+            return 2;
+            break;
+        case BERSERKER:
+            return 3;
+            break;
+        case ARCHER:
+            return 2;
+            break;
+        case KNIGHT:
+            return 5;
+            break;
+        default:
+            return 0;
+            break;
+        }
+    }
     Soldier(sf::Vector2u position, Direction direction, int health, int damage, int range, int view, int defense_p, int defense_m, int cost, Order label)
         : health(health)
         , damage(damage)
@@ -49,7 +72,7 @@ public:
 
     {
         ismoving = false;
-        isattacking = false;
+        isattacked = false;
         isdead = false;
         isunderattack = false;
         move_step = view;
@@ -87,9 +110,9 @@ public:
     {
         return ismoving;
     }
-    bool getIsAttacking()
+    bool getisattacked()
     {
-        return isattacking;
+        return isattacked;
     }
     bool getIsDead()
     {
@@ -164,9 +187,9 @@ public:
     {
         this->ismoving = ismoving;
     }
-    void setIsAttacking(bool isattacking)
+    void setisattacked(bool isattacked)
     {
-        this->isattacking = isattacking;
+        this->isattacked = isattacked;
     }
     void setIsDead(bool isdead)
     {
@@ -179,6 +202,7 @@ public:
     void refresh()
     {
         move_step = view;
+        isattacked = false;
     }
     virtual void move(int steps, Direction direction)
     {
@@ -211,11 +235,13 @@ public:
     ~Infantry() = default;
     void attack(Soldier& enemy) override
     {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
+        if (!this->getisattacked()) {
+            this->setisattacked(true);
+            enemy.setIsUnderAttack(true);
+            enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
+            if (enemy.getHealth() <= 0) {
+                enemy.setIsDead(true);
+            }
         }
     }
 };
@@ -228,11 +254,13 @@ public:
     ~Caster() = default;
     void attack(Soldier& enemy) override
     {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
+        if (!this->getisattacked()) {
+            this->setisattacked(true);
+            enemy.setIsUnderAttack(true);
+            enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m()) / 100.0) * this->getDamage()));
+            if (enemy.getHealth() <= 0) {
+                enemy.setIsDead(true);
+            }
         }
     }
 };
@@ -245,11 +273,13 @@ public:
     ~Berserker() = default;
     void attack(Soldier& enemy) override
     {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
+        if (!this->getisattacked()) {
+            this->setisattacked(true);
+            enemy.setIsUnderAttack(true);
+            enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
+            if (enemy.getHealth() <= 0) {
+                enemy.setIsDead(true);
+            }
         }
     }
 };
@@ -262,11 +292,13 @@ public:
     ~Archer() = default;
     void attack(Soldier& enemy) override
     {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
+        if (!this->getisattacked()) {
+            this->setisattacked(true);
+            enemy.setIsUnderAttack(true);
+            enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
+            if (enemy.getHealth() <= 0) {
+                enemy.setIsDead(true);
+            }
         }
     }
 };
@@ -279,11 +311,13 @@ public:
     ~Knight() = default;
     void attack(Soldier& enemy) override
     {
-        this->setIsAttacking(true);
-        enemy.setIsUnderAttack(true);
-        enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p())) / 100.0 * this->getDamage()));
-        if (enemy.getHealth() <= 0) {
-            enemy.setIsDead(true);
+        if (!this->getisattacked()) {
+            this->setisattacked(true);
+            enemy.setIsUnderAttack(true);
+            enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
+            if (enemy.getHealth() <= 0) {
+                enemy.setIsDead(true);
+            }
         }
     }
 };

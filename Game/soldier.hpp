@@ -200,6 +200,15 @@ public:
             return false;
         }
     }
+    Soldier* getSoldier(sf::Vector2u position)
+    {
+        auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
+        if (found != soldiers.end()) {
+            return *found;
+        } else {
+            return nullptr;
+        }
+    }
     Soldier* handleEvent(sf::Vector2i mousePosition)
     {
         auto find_method = [&](Soldier* i) { return sf::FloatRect(i->getPosition().x * 32, i->getPosition().y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };

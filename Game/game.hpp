@@ -66,10 +66,15 @@ public:
                 window.draw(*up);
             }
             window.draw(*shade);
+            ui->update(value);
             window.draw(*ui);
             window.display();
             sf::sleep(sf::milliseconds(50));
         }
+    }
+    void refresh()
+    {
+        value += 5;
     }
     void run()
     {
@@ -105,7 +110,7 @@ public:
                                 State tmp;
                                 ui->handle(now, &tmp);
                                 state = tmp;
-                                if (state != Regular) {
+                                if (state == State::Ui_Selecting) {
                                     under->setLabel(0);
                                     under->update();
                                 }
@@ -124,7 +129,12 @@ public:
                             break;
                         case Ui_Selecting:
                             if (under->handleEvent(now)) {
-                                red_soldier->addSoldier(ui->getOrder(), sf::Vector2u(now.x / 32, now.y / 32), Direction::right);
+                                Order tmp = ui->getOrder();
+                                int cost = Soldier::getValue(tmp);
+                                if (value >= cost) {
+                                    value -= cost;
+                                    red_soldier->addSoldier(tmp, sf::Vector2u(now.x / 32, now.y / 32), Direction::right);
+                                }
                                 state = State::Regular;
                                 ui->unselected();
                             } else {
@@ -154,6 +164,16 @@ public:
                                 } else {
                                     std::cout << "error";
                                 }
+                            } else if (up->handleEvent(now)) {
+                                Soldier* tmp = under->getSoldier();
+                                sf::Vector2u flag = up->getFlag();
+                                Soldier* attack_target;
+                                if (attack_target = blue_soldier->getSoldier(flag)) {
+                                    tmp->attack(*attack_target);
+                                }
+                                state = State::Regular;
+                            } else {
+                                state = State::Regular;
                             }
                             break;
                         case AI:

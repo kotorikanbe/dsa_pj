@@ -59,15 +59,19 @@ public:
                 for (int j = 0; j < 10; j++) {
                     sf::Vector2u position = sf::Vector2u(i, j);
                     if (!soldiers->findSoldier(position)) {
-                        Component component(position, sf::Color::Blue);
-                        under_components.push_back(component);
+                        if (!enemy->findSoldier(position)) {
+                            Component component(position, sf::Color::Blue);
+                            under_components.push_back(component);
+                        }
                     }
                 }
                 for (int j = 19; j < 31; j++) {
                     sf::Vector2u position = sf::Vector2u(i, j);
                     if (!soldiers->findSoldier(position)) {
-                        Component component(position, sf::Color::Blue);
-                        under_components.push_back(component);
+                        if (!enemy->findSoldier(position)) {
+                            Component component(position, sf::Color::Blue);
+                            under_components.push_back(component);
+                        }
                     }
                 }
             }
@@ -210,7 +214,7 @@ public:
     }
     static bool handleEvent(sf::Vector2i mousePosition)
     {
-        auto find_method = [&](Component& i) { return sf::FloatRect(i.position.x * 32, i.position.y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
+        auto find_method = [&](Component& i) { return i.color != sf::Color::Red && sf::FloatRect(i.position.x * 32, i.position.y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
         auto found = std::find_if(under_components.begin(), under_components.end(), find_method);
         if (found != under_components.end()) {
             flag = (*found).position;
@@ -234,6 +238,7 @@ private:
     static sf::Texture texture;
     static std::vector<sf::Sprite> up_components;
     static Soldier* soldier;
+    static sf::Vector2u flag;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         for (const sf::Sprite& i : up_components) {
@@ -282,8 +287,24 @@ public:
             }
         }
     }
+    static bool handleEvent(sf::Vector2i mousePosition)
+    {
+        auto find_method = [&](sf::Sprite& i) { return i.getGlobalBounds().contains(mousePosition.x, mousePosition.y); };
+        auto found = std::find_if(up_components.begin(), up_components.end(), find_method);
+        if (found != up_components.end()) {
+            flag = sf::Vector2u(static_cast<unsigned int>((*found).getPosition().x / 32.0), static_cast<unsigned int>((*found).getPosition().y / 32.0));
+            return true;
+        } else {
+            return false;
+        }
+    }
+    static sf::Vector2u getFlag()
+    {
+        return flag;
+    }
 };
 Soldier* Up_component::soldier;
 Under_component* Up_component::ref;
 sf::Texture Up_component::texture;
 std::vector<sf::Sprite> Up_component::up_components;
+sf::Vector2u Up_component::flag;
