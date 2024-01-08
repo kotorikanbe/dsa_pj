@@ -1,4 +1,5 @@
 #pragma once
+#include "state.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <vector>
@@ -85,31 +86,38 @@ public:
         value.setStyle(sf::Text::Bold);
         value.setFillColor(sf::Color::Red);
     }
-    State handleEvent(sf::Vector2i mousePosition)
+    void handle(sf::Vector2i mousePosition, State* rhs)
     {
-        if (button_shape.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
-            return State::AI;
+        if (button_shape.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            *rhs = State::AI;
+            return;
+        }
         if (Infantry.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(0);
-            return State::Ui_Selecting;
+            *rhs = State::Ui_Selecting;
+            return;
         }
         if (Caster.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(1);
-            return State::Ui_Selecting;
+            *rhs = State::Ui_Selecting;
+            return;
         }
         if (Archer.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(2);
-            return State::Ui_Selecting;
+            *rhs = State::Ui_Selecting;
+            return;
         }
         if (Knight.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(3);
-            return State::Ui_Selecting;
+            *rhs = State::Ui_Selecting;
+            return;
         }
         if (Berserker.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(4);
-            return State::Ui_Selecting;
+            *rhs = State::Ui_Selecting;
+            return;
         }
-        return State::Regular;
+        return;
     }
     void select(int label)
     {

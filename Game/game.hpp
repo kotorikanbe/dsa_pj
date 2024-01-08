@@ -3,18 +3,14 @@
 #include "map.hpp"
 #include "shade.hpp"
 #include "soldier.hpp"
+#include "state.hpp"
 #include "ui.hpp"
 #include <queue>
-enum State {
-    Regular,
-    Ui_Selecting,
-    Soldier_Selecting,
-    AI
-};
+
 class Game {
 private:
     Map* map;
-
+    Soldier_entity *blue_soldier, *red_soldier;
     sf::RenderWindow window;
     sf::Thread render_thread, mouse_thread;
     Shade* shade;
@@ -27,7 +23,6 @@ private:
     Up_component* up;
 
 public:
-    Soldier_entity *blue_soldier, *red_soldier;
     Game()
         : window(sf::RenderWindow(sf::VideoMode(1760, 960), "Tilemap"))
         , blue_soldier(new Soldier_entity(1))
@@ -102,7 +97,9 @@ public:
                     switch (state) {
                     case Regular:
                         if (now.x > 1280) {
-                            state = ui->handleEvent(now);
+                            State tmp;
+                            ui->handle(now, &tmp);
+                            state = tmp;
                             if (state != Regular) {
                                 under->setLabel(0);
                             }
