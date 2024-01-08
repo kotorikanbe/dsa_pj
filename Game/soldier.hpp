@@ -183,14 +183,9 @@ public:
             count_m = 0;
         }
     }
-    bool getIsmoving(sf::Vector2u position)
+    bool getIsmoving()
     {
-        auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
-        if (found != soldiers.end()) {
-            return (*found)->getIsMoving();
-        } else {
-            return false;
-        }
+        return isMoving;
     }
     void addSoldier(Order label, sf::Vector2u position, Direction direction)
     {
@@ -207,7 +202,7 @@ public:
     }
     Soldier* handleEvent(sf::Vector2i mousePosition)
     {
-        auto find_method = [&](Soldier* i) { return sf::FloatRect(i->getPosition().x * 32, i->getPosition().y * 32, i->getPosition().x * 32 + 32, i->getPosition().y * 32 + 32).contains(mousePosition.x, mousePosition.y); };
+        auto find_method = [&](Soldier* i) { return sf::FloatRect(i->getPosition().x * 32, i->getPosition().y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
         auto found = std::find_if(soldiers.begin(), soldiers.end(), find_method);
         if (found != soldiers.end()) {
             return *found;

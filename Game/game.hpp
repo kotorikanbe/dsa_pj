@@ -59,10 +59,12 @@ public:
             window.draw(*map);
             if (state == State::Ui_Selecting || state == State::Soldier_Selecting) {
                 window.draw(*under);
-                window.draw(*up);
             }
             window.draw(*blue_soldier);
             window.draw(*red_soldier);
+            if (state == State::Soldier_Selecting) {
+                window.draw(*up);
+            }
             window.draw(*shade);
             window.draw(*ui);
             window.display();
@@ -89,45 +91,76 @@ public:
     }
     void handle_mouse()
     {
+        // for test
+        blue_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(1, 19), left);
         while (1) {
             if (!mouse_event.empty()) {
                 sf::Vector2i now = mouse_event.front();
                 mouse_event.pop();
-                if (now.x >= 0 && now.y >= 0 && now.x <= 1760 && now.y <= 960) {
-                    switch (state) {
-                    case Regular:
-                        if (now.x > 1280) {
-                            State tmp;
-                            ui->handle(now, &tmp);
-                            state = tmp;
-                            if (state != Regular) {
-                                under->setLabel(0);
+                if (!red_soldier->getIsmoving()) {
+                    if (now.x >= 0 && now.y >= 0 && now.x <= 1760 && now.y <= 960) {
+                        switch (state) {
+                        case Regular:
+                            if (now.x > 1280) {
+                                State tmp;
+                                ui->handle(now, &tmp);
+                                state = tmp;
+                                if (state != Regular) {
+                                    under->setLabel(0);
+                                    under->update();
+                                }
+                            } else {
+                                Soldier* tmp;
+                                tmp = red_soldier->handleEvent(now);
+                                if (tmp) {
+                                    state = State::Soldier_Selecting;
+                                    under->setSoldier(tmp);
+                                    under->setLabel(1);
+                                    under->update();
+                                    up->setSoldier(tmp);
+                                    up->update();
+                                }
                             }
-                        } else {
-                            Soldier* tmp;
-                            tmp = red_soldier->handleEvent(now);
-                            if (tmp) {
-                                state = State::Soldier_Selecting;
-                                under->setSoldier(tmp);
-                                under->setLabel(1);
-                                up->update();
+                            break;
+                        case Ui_Selecting:
+                            if (under->handleEvent(now)) {
+                                red_soldier->addSoldier(ui->getOrder(), sf::Vector2u(now.x / 32, now.y / 32), Direction::right);
+                                state = State::Regular;
+                                ui->unselected();
+                            } else {
+                                state = State::Regular;
+                                ui->unselected();
                             }
+                            break;
+                        case Soldier_Selecting:
+                            if (under->handleEvent(now)) {
+                                Soldier* tmp = under->getSoldier();
+                                sf::Vector2u flag = under->getFlag();
+                                int first, second;
+                                first = static_cast<int>(flag.x) - static_cast<int>(tmp->getPosition().x);
+                                second = static_cast<int>(flag.y) - static_cast<int>(tmp->getPosition().y);
+                                if (first > 0) {
+                                    red_soldier->moveSoldier(tmp->getPosition(), right, first);
+                                    state = State::Regular;
+                                } else if (first < 0) {
+                                    red_soldier->moveSoldier(tmp->getPosition(), left, -first);
+                                    state = State::Regular;
+                                } else if (second > 0) {
+                                    red_soldier->moveSoldier(tmp->getPosition(), down, second);
+                                    state = State::Regular;
+                                } else if (second < 0) {
+                                    red_soldier->moveSoldier(tmp->getPosition(), Direction::up, -second);
+                                    state = State::Regular;
+                                } else {
+                                    std::cout << "error";
+                                }
+                            }
+                            break;
+                        case AI:
+                            break;
+                        default:
+                            break;
                         }
-                        break;
-                    case Ui_Selecting:
-                        if (under->handleEvent(now)) {
-                            red_soldier->addSoldier(ui->getOrder(), sf::Vector2u(now.x / 32, now.y / 32), Direction::right);
-                        } else {
-                            state = State::Regular;
-                            ui->unselected();
-                        }
-                        break;
-                    case Soldier_Selecting:
-                        break;
-                    case AI:
-                        break;
-                    default:
-                        break;
                     }
                 }
             }

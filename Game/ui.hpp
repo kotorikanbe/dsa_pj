@@ -47,15 +47,15 @@ public:
         Caster.setTexture(soldiers);
         Caster.setTextureRect(sf::IntRect(256, 0, 126, 127));
         Caster.setPosition(sf::Vector2f(1456, down_length));
-        Archer.setTexture(soldiers);
-        Archer.setTextureRect(sf::IntRect(512, 0, 126, 127));
-        Archer.setPosition(sf::Vector2f(1608, down_length));
-        Knight.setTexture(soldiers);
-        Knight.setTextureRect(sf::IntRect(768, 0, 127, 127));
-        Knight.setPosition(sf::Vector2f(1354.66667, 150 + down_length));
         Berserker.setTexture(soldiers);
-        Berserker.setTextureRect(sf::IntRect(1024, 0, 126, 127));
-        Berserker.setPosition(sf::Vector2f(1557.33333, 150 + down_length));
+        Berserker.setTextureRect(sf::IntRect(512, 0, 126, 127));
+        Berserker.setPosition(sf::Vector2f(1608, down_length));
+        Archer.setTexture(soldiers);
+        Archer.setTextureRect(sf::IntRect(768, 0, 127, 127));
+        Archer.setPosition(sf::Vector2f(1354.66667, 150 + down_length));
+        Knight.setTexture(soldiers);
+        Knight.setTextureRect(sf::IntRect(1024, 0, 126, 127));
+        Knight.setPosition(sf::Vector2f(1557.33333, 150 + down_length));
         font.loadFromFile("yahei.ttf");
         button.setFont(font);
         button.setString(std::wstring(L"½áÊø"));
@@ -102,17 +102,17 @@ public:
             *rhs = State::Ui_Selecting;
             return;
         }
-        if (Archer.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+        if (Berserker.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(2);
             *rhs = State::Ui_Selecting;
             return;
         }
-        if (Knight.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+        if (Archer.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(3);
             *rhs = State::Ui_Selecting;
             return;
         }
-        if (Berserker.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+        if (Knight.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
             this->select(4);
             *rhs = State::Ui_Selecting;
             return;
@@ -134,15 +134,15 @@ public:
             selected.setPosition(sf::Vector2f(1456, down_length));
             break;
         case 2:
-            order = Order::ARCHER;
+            order = Order::BERSERKER;
             selected.setPosition(sf::Vector2f(1608, down_length));
             break;
         case 3:
-            order = Order::KNIGHT;
+            order = Order::ARCHER;
             selected.setPosition(sf::Vector2f(1354.66667, 150 + down_length));
             break;
         case 4:
-            order = Order::BERSERKER;
+            order = Order::KNIGHT;
             selected.setPosition(sf::Vector2f(1557.33333, 150 + down_length));
             break;
         default:

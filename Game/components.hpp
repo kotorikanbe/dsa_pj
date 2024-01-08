@@ -4,6 +4,7 @@
 #include "soldier.hpp"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 // this is something small element
 
@@ -33,7 +34,9 @@ private:
     static Map* map;
     static Soldier_entity* soldiers;
     static Soldier_entity* enemy;
-    static int label; // 0 is selected the ui ,1 is the soldier
+    static int label;
+    static sf::Vector2u flag;
+    // 0 is selected the ui ,1 is the soldier
     Under_component()
     {
         soldier = nullptr;
@@ -46,6 +49,8 @@ private:
             target.draw(i);
         };
     }
+
+public:
     static void update()
     {
         under_components.clear();
@@ -71,6 +76,7 @@ private:
                 sf::Vector2u position;
                 position = soldier->getPosition();
                 int view = soldier->getView();
+                int move_step = soldier->getMoveStep();
                 int x = position.x;
                 int y = position.y;
                 for (int i = x - 1; i >= x - view; i--) {
@@ -79,8 +85,10 @@ private:
                             if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
                                 if (!enemy->findSoldier(sf::Vector2u(i, y))) {
                                     if (!map->isBarrier(sf::Vector2u(i, y))) {
-                                        Component component(sf::Vector2u(i, y), sf::Color::Blue);
-                                        under_components.push_back(component);
+                                        if (std::abs(i - x) <= move_step) {
+                                            Component component(sf::Vector2u(i, y), sf::Color::Blue);
+                                            under_components.push_back(component);
+                                        }
                                     } else {
                                         break;
                                     }
@@ -98,8 +106,10 @@ private:
                             if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
                                 if (!enemy->findSoldier(sf::Vector2u(i, y))) {
                                     if (!map->isBarrier(sf::Vector2u(i, y))) {
-                                        Component component(sf::Vector2u(i, y), sf::Color::Blue);
-                                        under_components.push_back(component);
+                                        if (std::abs(i - x) <= move_step) {
+                                            Component component(sf::Vector2u(i, y), sf::Color::Blue);
+                                            under_components.push_back(component);
+                                        }
                                     } else {
                                         break;
                                     }
@@ -117,8 +127,10 @@ private:
                             if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
                                 if (!enemy->findSoldier(sf::Vector2u(x, j))) {
                                     if (!map->isBarrier(sf::Vector2u(x, j))) {
-                                        Component component(sf::Vector2u(x, j), sf::Color::Blue);
-                                        under_components.push_back(component);
+                                        if (std::abs(j - y) <= move_step) {
+                                            Component component(sf::Vector2u(x, j), sf::Color::Blue);
+                                            under_components.push_back(component);
+                                        }
                                     } else {
                                         break;
                                     }
@@ -136,8 +148,10 @@ private:
                             if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
                                 if (!enemy->findSoldier(sf::Vector2u(x, j))) {
                                     if (!map->isBarrier(sf::Vector2u(x, j))) {
-                                        Component component(sf::Vector2u(x, j), sf::Color::Blue);
-                                        under_components.push_back(component);
+                                        if (std::abs(j - y) <= move_step) {
+                                            Component component(sf::Vector2u(x, j), sf::Color::Blue);
+                                            under_components.push_back(component);
+                                        }
                                     } else {
                                         break;
                                     }
@@ -153,7 +167,6 @@ private:
         }
     }
 
-public:
     static Under_component* getInstance(Soldier_entity* lhs, Soldier_entity* enemy)
     {
         static Under_component* instance;
@@ -167,13 +180,19 @@ public:
     static void setSoldier(Soldier* soldier)
     {
         Under_component::soldier = soldier;
-        Under_component::update();
+    }
+    static Soldier* getSoldier()
+    {
+        return soldier;
+    }
+    static sf::Vector2u getFlag()
+    {
+        return flag;
     }
     static void setLabel(int label)
     {
         if (label == 0 || label == 1) {
             Under_component::label = label;
-            Under_component::update();
         }
     }
     static void setSoldiers(Soldier_entity* soldiers)
@@ -191,9 +210,10 @@ public:
     }
     static bool handleEvent(sf::Vector2i mousePosition)
     {
-        auto find_method = [&](Component& i) { return sf::FloatRect(i.position.x * 32, i.position.y * 32, i.position.x * 32 + 32, i.position.y * 32 + 32).contains(mousePosition.x, mousePosition.y); };
+        auto find_method = [&](Component& i) { return sf::FloatRect(i.position.x * 32, i.position.y * 32, 32, 32).contains(mousePosition.x, mousePosition.y); };
         auto found = std::find_if(under_components.begin(), under_components.end(), find_method);
         if (found != under_components.end()) {
+            flag = (*found).position;
             return true;
         } else {
             return false;
@@ -207,11 +227,13 @@ Map* Under_component::map;
 Soldier_entity* Under_component::soldiers;
 Soldier_entity* Under_component::enemy;
 int Under_component::label;
+sf::Vector2u Under_component::flag;
 class Up_component : public sf::Drawable, public sf::Transformable {
 private:
     static Under_component* ref;
     static sf::Texture texture;
     static std::vector<sf::Sprite> up_components;
+    static Soldier* soldier;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         for (const sf::Sprite& i : up_components) {
@@ -239,19 +261,29 @@ public:
         }
         return instance;
     }
+    static void setSoldier(Soldier* soldier)
+    {
+        Up_component::soldier = soldier;
+    }
     static void update()
     {
         up_components.clear();
         for (const Component& i : ref->under_components) {
             if (i.rectangle.getFillColor() == sf::Color::Red) {
-                sf::Sprite sprite;
-                sprite.setTexture(texture);
-                sprite.setPosition(i.rectangle.getPosition());
-                up_components.push_back(sprite);
+                sf::Vector2u tmp1 = soldier->getPosition();
+                sf::Vector2u tmp2 = i.position;
+                int range = soldier->getRange();
+                if ((std::abs(static_cast<int>(tmp1.x) - static_cast<int>(tmp2.x)) <= range && tmp1.y == tmp2.y) || (std::abs(static_cast<int>(tmp1.y) - static_cast<int>(tmp2.y)) <= range && tmp1.x == tmp2.x)) {
+                    sf::Sprite sprite;
+                    sprite.setTexture(texture);
+                    sprite.setPosition(i.rectangle.getPosition());
+                    up_components.push_back(sprite);
+                }
             }
         }
     }
 };
+Soldier* Up_component::soldier;
 Under_component* Up_component::ref;
 sf::Texture Up_component::texture;
 std::vector<sf::Sprite> Up_component::up_components;

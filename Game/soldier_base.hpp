@@ -31,6 +31,7 @@ private
     Direction direction;
     int phase; // 0-3 valid
     Order label;
+    int move_step;
 
 public:
     Soldier(sf::Vector2u position, Direction direction, int health, int damage, int range, int view, int defense_p, int defense_m, int cost, Order label)
@@ -51,6 +52,7 @@ public:
         isattacking = false;
         isdead = false;
         isunderattack = false;
+        move_step = view;
     }
     ~Soldier() = default;
     int getHealth()
@@ -108,6 +110,10 @@ public:
     int getPhase()
     {
         return phase;
+    }
+    int getMoveStep()
+    {
+        return move_step;
     }
     Order getLabel()
     {
@@ -170,9 +176,13 @@ public:
     {
         this->isunderattack = isunderattack;
     }
+    void refresh()
+    {
+        move_step = view;
+    }
     virtual void move(int steps, Direction direction)
     {
-
+        move_step -= steps;
         switch (direction) {
         case up:
             this->position.y -= steps;
