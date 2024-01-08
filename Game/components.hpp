@@ -31,8 +31,8 @@ class Under_component : public sf::Drawable, public sf::Transformable {
 private:
     static Soldier* soldier;
     static Map* map;
-    static Soldier_entity& soldiers;
-    static Soldier_entity& enemy;
+    static Soldier_entity* soldiers;
+    static Soldier_entity* enemy;
     static int label; // 0 is selected the ui ,1 is the soldier
     Under_component()
     {
@@ -53,14 +53,14 @@ private:
             for (int i = 0; i < 7; i++) {
                 for (int j = 0; j < 10; j++) {
                     sf::Vector2u position = sf::Vector2u(i, j);
-                    if (!soldiers.findSoldier(position)) {
+                    if (!soldiers->findSoldier(position)) {
                         Component component(position, sf::Color::Blue);
                         under_components.push_back(component);
                     }
                 }
                 for (int j = 19; j < 31; j++) {
                     sf::Vector2u position = sf::Vector2u(i, j);
-                    if (!soldiers.findSoldier(position)) {
+                    if (!soldiers->findSoldier(position)) {
                         Component component(position, sf::Color::Blue);
                         under_components.push_back(component);
                     }
@@ -76,8 +76,8 @@ private:
                 for (int i = x - 1; i >= x - view; i--) {
                     if (i != x) {
                         if (i >= 0 && i <= 39) {
-                            if (!soldiers.findSoldier(sf::Vector2u(i, y))) {
-                                if (!enemy.findSoldier(sf::Vector2u(i, y))) {
+                            if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
+                                if (!enemy->findSoldier(sf::Vector2u(i, y))) {
                                     if (!map->isBarrier(sf::Vector2u(i, y))) {
                                         Component component(sf::Vector2u(i, y), sf::Color::Blue);
                                         under_components.push_back(component);
@@ -95,8 +95,8 @@ private:
                 for (int i = x + 1; i <= x + view; i++) {
                     if (i != x) {
                         if (i >= 0 && i <= 39) {
-                            if (!soldiers.findSoldier(sf::Vector2u(i, y))) {
-                                if (!enemy.findSoldier(sf::Vector2u(i, y))) {
+                            if (!soldiers->findSoldier(sf::Vector2u(i, y))) {
+                                if (!enemy->findSoldier(sf::Vector2u(i, y))) {
                                     if (!map->isBarrier(sf::Vector2u(i, y))) {
                                         Component component(sf::Vector2u(i, y), sf::Color::Blue);
                                         under_components.push_back(component);
@@ -114,8 +114,8 @@ private:
                 for (int j = y - 1; j >= y - view; j--) {
                     if (j != y) {
                         if (j >= 0 && j <= 29) {
-                            if (!soldiers.findSoldier(sf::Vector2u(x, j))) {
-                                if (!enemy.findSoldier(sf::Vector2u(x, j))) {
+                            if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
+                                if (!enemy->findSoldier(sf::Vector2u(x, j))) {
                                     if (!map->isBarrier(sf::Vector2u(x, j))) {
                                         Component component(sf::Vector2u(x, j), sf::Color::Blue);
                                         under_components.push_back(component);
@@ -133,8 +133,8 @@ private:
                 for (int j = y + 1; j <= y + view; j++) {
                     if (j != y) {
                         if (j >= 0 && j <= 29) {
-                            if (!soldiers.findSoldier(sf::Vector2u(x, j))) {
-                                if (!enemy.findSoldier(sf::Vector2u(x, j))) {
+                            if (!soldiers->findSoldier(sf::Vector2u(x, j))) {
+                                if (!enemy->findSoldier(sf::Vector2u(x, j))) {
                                     if (!map->isBarrier(sf::Vector2u(x, j))) {
                                         Component component(sf::Vector2u(x, j), sf::Color::Blue);
                                         under_components.push_back(component);
@@ -154,7 +154,7 @@ private:
     }
 
 public:
-    static Under_component* getInstance(Soldier_entity& lhs, Soldier_entity& enemy)
+    static Under_component* getInstance(Soldier_entity* lhs, Soldier_entity* enemy)
     {
         static Under_component* instance;
         if (instance == nullptr) {
@@ -176,11 +176,11 @@ public:
             Under_component::update();
         }
     }
-    static void setSoldiers(Soldier_entity soldiers)
+    static void setSoldiers(Soldier_entity* soldiers)
     {
         Under_component::soldiers = soldiers;
     }
-    static void setEnemy(Soldier_entity enemy)
+    static void setEnemy(Soldier_entity* enemy)
     {
         Under_component::enemy = enemy;
     }
@@ -189,13 +189,23 @@ public:
         auto found = std::find_if(under_components.begin(), under_components.end(), [=](Component tmp) { return tmp.position == position; });
         return found != under_components.end();
     }
+    static bool handleEvent(sf::Vector2i mousePosition)
+    {
+        auto find_method = [&](Component& i) { return sf::FloatRect(i.position.x * 32, i.position.y * 32, i.position.x * 32 + 32, i.position.y * 32 + 32).contains(mousePosition.x, mousePosition.y); };
+        auto found = std::find_if(under_components.begin(), under_components.end(), find_method);
+        if (found != under_components.end()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     static std::vector<Component> under_components;
 };
 std::vector<Component> Under_component::under_components;
 Soldier* Under_component::soldier;
 Map* Under_component::map;
-Soldier_entity& Under_component::soldiers = *(Game::red_soldier);
-Soldier_entity& Under_component::enemy = *(Game::blue_soldier);
+Soldier_entity* Under_component::soldiers;
+Soldier_entity* Under_component::enemy;
 int Under_component::label;
 class Up_component : public sf::Drawable, public sf::Transformable {
 private:

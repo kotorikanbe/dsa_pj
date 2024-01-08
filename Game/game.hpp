@@ -27,11 +27,11 @@ private:
     Up_component* up;
 
 public:
-    static Soldier_entity *blue_soldier, *red_soldier;
+    Soldier_entity *blue_soldier, *red_soldier;
     Game()
         : window(sf::RenderWindow(sf::VideoMode(1760, 960), "Tilemap"))
-        //, blue_soldier(new Soldier_entity(1))
-        //, red_soldier(new Soldier_entity(0))
+        , blue_soldier(new Soldier_entity(1))
+        , red_soldier(new Soldier_entity(0))
         , render_thread(&Game::render, this)
         , mouse_thread(&Game::handle_mouse, this)
         , shade(new Shade(*red_soldier))
@@ -41,7 +41,9 @@ public:
     {
         map = Map::getInstance();
         map->load();
-        state = Regular;
+        this->state = State::Regular;
+        under = Under_component::getInstance(red_soldier, blue_soldier);
+        up = Up_component::getInstance(under);
     }
     ~Game()
     {
@@ -60,6 +62,10 @@ public:
             shade->update();
             ui->update(value);
             window.draw(*map);
+            if (state == State::Ui_Selecting || state == State::Soldier_Selecting) {
+                window.draw(*under);
+                window.draw(*up);
+            }
             window.draw(*blue_soldier);
             window.draw(*red_soldier);
             window.draw(*shade);
@@ -95,9 +101,29 @@ public:
                 if (now.x >= 0 && now.y >= 0 && now.x <= 1760 && now.y <= 960) {
                     switch (state) {
                     case Regular:
-
+                        if (now.x > 1280) {
+                            state = ui->handleEvent(now);
+                            if (state != Regular) {
+                                under->setLabel(0);
+                            }
+                        } else {
+                            Soldier* tmp;
+                            tmp = red_soldier->handleEvent(now);
+                            if (tmp) {
+                                state = State::Soldier_Selecting;
+                                under->setSoldier(tmp);
+                                under->setLabel(1);
+                                up->update();
+                            }
+                        }
                         break;
                     case Ui_Selecting:
+                        if (under->handleEvent(now)) {
+                            red_soldier->addSoldier(ui->getOrder(), sf::Vector2u(now.x / 32, now.y / 32), Direction::right);
+                        } else {
+                            state = State::Regular;
+                            ui->unselected();
+                        }
                         break;
                     case Soldier_Selecting:
                         break;
@@ -111,5 +137,3 @@ public:
         }
     }
 };
-Soldier_entity* Game::blue_soldier = new Soldier_entity(1);
-Soldier_entity* Game::red_soldier = new Soldier_entity(0);

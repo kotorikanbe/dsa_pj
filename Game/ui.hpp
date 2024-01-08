@@ -13,6 +13,7 @@ private:
     sf::RectangleShape selected;
     double down_length;
     bool selected_state;
+    Order order;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(S_background);
@@ -31,6 +32,7 @@ private:
 public:
     Ui()
     {
+        order = Order::INFANTRY;
         selected_state = false;
         value_i = 0;
         down_length = 100;
@@ -83,31 +85,68 @@ public:
         value.setStyle(sf::Text::Bold);
         value.setFillColor(sf::Color::Red);
     }
-    void selected(int label)
+    State handleEvent(sf::Vector2i mousePosition)
+    {
+        if (button_shape.getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+            return State::AI;
+        if (Infantry.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            this->select(0);
+            return State::Ui_Selecting;
+        }
+        if (Caster.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            this->select(1);
+            return State::Ui_Selecting;
+        }
+        if (Archer.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            this->select(2);
+            return State::Ui_Selecting;
+        }
+        if (Knight.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            this->select(3);
+            return State::Ui_Selecting;
+        }
+        if (Berserker.getGlobalBounds().contains(mousePosition.x, mousePosition.y)) {
+            this->select(4);
+            return State::Ui_Selecting;
+        }
+        return State::Regular;
+    }
+    void select(int label)
     {
         selected_state = true;
         selected.setSize(sf::Vector2f(128, 128));
         selected.setFillColor(sf::Color(0xf4, 0xf1, 0xb9));
         switch (label) {
-        case 1:
+        case 0:
+            order = Order::INFANTRY;
             selected.setPosition(sf::Vector2f(1304, down_length));
             break;
-        case 2:
+        case 1:
+            order = Order::CASTER;
             selected.setPosition(sf::Vector2f(1456, down_length));
             break;
-        case 3:
+        case 2:
+            order = Order::ARCHER;
             selected.setPosition(sf::Vector2f(1608, down_length));
             break;
-        case 4:
+        case 3:
+            order = Order::KNIGHT;
             selected.setPosition(sf::Vector2f(1354.66667, 150 + down_length));
             break;
-        case 5:
+        case 4:
+            order = Order::BERSERKER;
             selected.setPosition(sf::Vector2f(1557.33333, 150 + down_length));
+            break;
+        default:
             break;
         }
     }
-    void unselcted()
+    void unselected()
     {
         selected_state = false;
+    }
+    Order getOrder() const
+    {
+        return order;
     }
 };

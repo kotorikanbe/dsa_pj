@@ -2,6 +2,7 @@
 #include "soldier_base.hpp"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <utility>
 #include <vector>
 class Soldier_entity : public sf::Drawable, public sf::Transformable {
 private:
@@ -14,7 +15,7 @@ private:
     int steps_m;
     bool isMoving;
     int count_m;
-    std::vector<Soldier*> soldiers;
+
     uint8_t team; // 0 is red 1 is blue
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
@@ -66,6 +67,7 @@ private:
     }
 
 public:
+    std::vector<Soldier*> soldiers;
     void update()
     {
         m_vertices.clear();
@@ -201,6 +203,16 @@ public:
             return true;
         } else {
             return false;
+        }
+    }
+    Soldier* handleEvent(sf::Vector2i mousePosition)
+    {
+        auto find_method = [&](Soldier* i) { return sf::FloatRect(i->getPosition().x * 32, i->getPosition().y * 32, i->getPosition().x * 32 + 32, i->getPosition().y * 32 + 32).contains(mousePosition.x, mousePosition.y); };
+        auto found = std::find_if(soldiers.begin(), soldiers.end(), find_method);
+        if (found != soldiers.end()) {
+            return *found;
+        } else {
+            return nullptr;
         }
     }
 };
