@@ -13,6 +13,11 @@ private:
     sf::Vector2u position;
 
 public:
+    Map_node()
+        : position(sf::Vector2u(0, 0))
+    {
+        isBarrier = false;
+    };
     Map_node(sf::Vector2u pos, int label)
         : position(pos)
     {
@@ -96,9 +101,13 @@ public:
         m_sprite_red.setPosition(sf::Vector2f(0.0, 416.0));
         m_sprite_blue.setPosition(sf::Vector2f(1184.0, 416.0));
     }
-    static std::array<std::array<Map_node, 30>, 40>& getData()
+    /*static std::array<std::array<Map_node, 30>, 40>& getData()
     {
         return data;
+    }*/
+    static bool isBarrier(sf::Vector2u pos)
+    {
+        return data[pos.x][pos.y].getBarrier();
     }
 
 private:

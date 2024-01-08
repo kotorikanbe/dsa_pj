@@ -14,6 +14,7 @@ private:
     int steps_m;
     bool isMoving;
     int count_m;
+    std::vector<Soldier*> soldiers;
     uint8_t team; // 0 is red 1 is blue
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
@@ -193,5 +194,13 @@ public:
     {
         soldiers.push_back(factory->createSoldier(label, position, direction));
     }
-    std::vector<Soldier*> soldiers;
+    bool findSoldier(sf::Vector2u position)
+    {
+        auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
+        if (found != soldiers.end()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 };

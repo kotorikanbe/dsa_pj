@@ -1,4 +1,5 @@
 #pragma once
+#include "components.hpp"
 #include "map.hpp"
 #include "shade.hpp"
 #include "soldier.hpp"
@@ -13,7 +14,7 @@ enum State {
 class Game {
 private:
     Map* map;
-    Soldier_entity *blue_soldier, *red_soldier;
+
     sf::RenderWindow window;
     sf::Thread render_thread, mouse_thread;
     Shade* shade;
@@ -22,12 +23,15 @@ private:
     int value;
     sf::Clock clock;
     State state;
+    Under_component* under;
+    Up_component* up;
 
 public:
+    static Soldier_entity *blue_soldier, *red_soldier;
     Game()
         : window(sf::RenderWindow(sf::VideoMode(1760, 960), "Tilemap"))
-        , blue_soldier(new Soldier_entity(1))
-        , red_soldier(new Soldier_entity(0))
+        //, blue_soldier(new Soldier_entity(1))
+        //, red_soldier(new Soldier_entity(0))
         , render_thread(&Game::render, this)
         , mouse_thread(&Game::handle_mouse, this)
         , shade(new Shade(*red_soldier))
@@ -88,7 +92,24 @@ public:
             if (!mouse_event.empty()) {
                 sf::Vector2i now = mouse_event.front();
                 mouse_event.pop();
+                if (now.x >= 0 && now.y >= 0 && now.x <= 1760 && now.y <= 960) {
+                    switch (state) {
+                    case Regular:
+
+                        break;
+                    case Ui_Selecting:
+                        break;
+                    case Soldier_Selecting:
+                        break;
+                    case AI:
+                        break;
+                    default:
+                        break;
+                    }
+                }
             }
         }
     }
 };
+Soldier_entity* Game::blue_soldier = new Soldier_entity(1);
+Soldier_entity* Game::red_soldier = new Soldier_entity(0);

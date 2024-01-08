@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
 class Ui : public sf::Drawable, public sf::Transformable {
 private:
     sf::Texture background, soldiers;
@@ -9,10 +10,14 @@ private:
     sf::Text button, value;
     int value_i;
     sf::RectangleShape button_shape;
+    sf::RectangleShape selected;
     double down_length;
+    bool selected_state;
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
         target.draw(S_background);
+        if (selected_state)
+            target.draw(selected);
         target.draw(Infantry);
         target.draw(Caster);
         target.draw(Archer);
@@ -26,6 +31,7 @@ private:
 public:
     Ui()
     {
+        selected_state = false;
         value_i = 0;
         down_length = 100;
         background.loadFromFile("background.png"); // 480*960
@@ -76,5 +82,32 @@ public:
         value.setPosition(sf::Vector2f(1520, 700 + down_length));
         value.setStyle(sf::Text::Bold);
         value.setFillColor(sf::Color::Red);
+    }
+    void selected(int label)
+    {
+        selected_state = true;
+        selected.setSize(sf::Vector2f(128, 128));
+        selected.setFillColor(sf::Color(0xf4, 0xf1, 0xb9));
+        switch (label) {
+        case 1:
+            selected.setPosition(sf::Vector2f(1304, down_length));
+            break;
+        case 2:
+            selected.setPosition(sf::Vector2f(1456, down_length));
+            break;
+        case 3:
+            selected.setPosition(sf::Vector2f(1608, down_length));
+            break;
+        case 4:
+            selected.setPosition(sf::Vector2f(1354.66667, 150 + down_length));
+            break;
+        case 5:
+            selected.setPosition(sf::Vector2f(1557.33333, 150 + down_length));
+            break;
+        }
+    }
+    void unselcted()
+    {
+        selected_state = false;
     }
 };
