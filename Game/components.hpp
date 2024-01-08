@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include <vector>
 // this is something small element
 
@@ -56,26 +57,50 @@ public:
     {
         under_components.clear();
         if (!label) {
-            for (int i = 0; i < 7; i++) {
-                for (int j = 0; j < 10; j++) {
-                    sf::Vector2u position = sf::Vector2u(i, j);
-                    if (!soldiers->findSoldier(position)) {
-                        if (!enemy->findSoldier(position)) {
-                            Component component(position, sf::Color::Blue);
-                            under_components.push_back(component);
+            if (soldiers->getTeam() == 0) {
+                for (int i = 0; i < 7; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        sf::Vector2u position = sf::Vector2u(i, j);
+                        if (!soldiers->findSoldier(position)) {
+                            if (!enemy->findSoldier(position)) {
+                                Component component(position, sf::Color::Blue);
+                                under_components.push_back(component);
+                            }
+                        }
+                    }
+                    for (int j = 19; j < 30; j++) {
+                        sf::Vector2u position = sf::Vector2u(i, j);
+                        if (!soldiers->findSoldier(position)) {
+                            if (!enemy->findSoldier(position)) {
+                                Component component(position, sf::Color::Blue);
+                                under_components.push_back(component);
+                            }
                         }
                     }
                 }
-                for (int j = 19; j < 31; j++) {
-                    sf::Vector2u position = sf::Vector2u(i, j);
-                    if (!soldiers->findSoldier(position)) {
-                        if (!enemy->findSoldier(position)) {
-                            Component component(position, sf::Color::Blue);
-                            under_components.push_back(component);
+            } else if (soldiers->getTeam() == 1) {
+                for (int i = 33; i < 40; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        sf::Vector2u position = sf::Vector2u(i, j);
+                        if (!soldiers->findSoldier(position)) {
+                            if (!enemy->findSoldier(position)) {
+                                Component component(position, sf::Color::Blue);
+                                under_components.push_back(component);
+                            }
+                        }
+                    }
+                    for (int j = 19; j < 30; j++) {
+                        sf::Vector2u position = sf::Vector2u(i, j);
+                        if (!soldiers->findSoldier(position)) {
+                            if (!enemy->findSoldier(position)) {
+                                Component component(position, sf::Color::Blue);
+                                under_components.push_back(component);
+                            }
                         }
                     }
                 }
             }
+
         } else {
             if (soldier != nullptr) {
                 sf::Vector2u position;
@@ -118,7 +143,7 @@ public:
                     if (map->isBarrier(sf::Vector2u(i, y))) {
                         break;
                     }
-                    if (Castle::whereCastle(sf::Vector2u(i, y), 1)) {
+                    if (Castle::whereCastle(sf::Vector2u(i, y), enemy->getTeam())) {
                         Component component(sf::Vector2u(i, y), sf::Color(255, 0, 0, 100));
                         under_components.push_back(component);
                         break;
@@ -162,7 +187,7 @@ public:
                     if (map->isBarrier(sf::Vector2u(i, y))) {
                         break;
                     }
-                    if (Castle::whereCastle(sf::Vector2u(i, y), 1)) {
+                    if (Castle::whereCastle(sf::Vector2u(i, y), enemy->getTeam())) {
                         Component component(sf::Vector2u(i, y), sf::Color(255, 0, 0, 100));
                         under_components.push_back(component);
                         break;
@@ -206,7 +231,7 @@ public:
                     if (map->isBarrier(sf::Vector2u(x, j))) {
                         break;
                     }
-                    if (Castle::whereCastle(sf::Vector2u(x, j), 1)) {
+                    if (Castle::whereCastle(sf::Vector2u(x, j), enemy->getTeam())) {
                         Component component(sf::Vector2u(x, j), sf::Color(255, 0, 0, 100));
                         under_components.push_back(component);
                         break;
@@ -250,7 +275,7 @@ public:
                     if (map->isBarrier(sf::Vector2u(x, j))) {
                         break;
                     }
-                    if (Castle::whereCastle(sf::Vector2u(x, j), 1)) {
+                    if (Castle::whereCastle(sf::Vector2u(x, j), enemy->getTeam())) {
                         Component component(sf::Vector2u(x, j), sf::Color(255, 0, 0, 100));
                         under_components.push_back(component);
                         break;
@@ -299,6 +324,16 @@ public:
     static void setEnemy(Soldier_entity* enemy)
     {
         Under_component::enemy = enemy;
+    }
+    static Component* getRandom()
+    {
+        if (under_components.empty()) {
+            return nullptr;
+        }
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dis(0, under_components.size() - 1);
+        return &under_components[dis(gen)];
     }
     static bool findComponent(sf::Vector2u position)
     {
@@ -394,6 +429,16 @@ public:
     static sf::Vector2u getFlag()
     {
         return flag;
+    }
+    static sf::Sprite* getRandom()
+    {
+        if (up_components.empty()) {
+            return nullptr;
+        }
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<int> dis(0, up_components.size() - 1);
+        return &up_components[dis(gen)];
     }
 };
 Soldier* Up_component::soldier;

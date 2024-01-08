@@ -21,7 +21,7 @@ public:
     static bool whereCastle(sf::Vector2u position, int label)
     {
         if (label == 0) {
-            if (position.x >= 0 && position.x <= 2 && position.y >= 13 && position.y <= 16) {
+            if (position.x >= 0 && position.x <= 2 && position.y >= 13 && position.y <= 15) {
                 return true;
             } else {
                 return false;

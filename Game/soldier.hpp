@@ -74,9 +74,9 @@ public:
         m_vertices.resize(500 * 6);
         m_shapes.clear();
         for (auto i : soldiers) {
-            if (team == 1 && getShade(i->getPosition())) {
+            /*if (team == 1 && getShade(i->getPosition())) {
                 continue;
-            }
+            }*/
             if (!i->getIsDead()) {
                 sf::Vector2u position = i->getPosition();
                 sf::Vertex triangles[6];
@@ -98,7 +98,7 @@ public:
                     default:
                         break;
                     }
-                    double tmp = static_cast<double>(count_m) / 100.0 * static_cast<double>(steps_m) * 32.0;
+                    double tmp = static_cast<double>(count_m) / 5.0 * static_cast<double>(steps_m) * 32.0;
                     sf::RectangleShape shape(sf::Vector2f(32.0 * static_cast<double>(i->getHealth()) / static_cast<double>(getMaxhealth(i->getLabel())), 2.0));
                     shape.setFillColor(team ? sf::Color::Blue : sf::Color::Red);
                     shape.setPosition(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
@@ -120,7 +120,7 @@ public:
                     triangles[3].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64 + 64);
                     triangles[4].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64);
                     triangles[5].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64 + 64);
-                    if (count_m == 101) {
+                    if (count_m == 6) {
                         isMoving = false;
                         i->move(steps_m, direction_m);
                         count_m = 0;
@@ -185,6 +185,18 @@ public:
             steps_m = steps;
             count_m = 0;
         }
+    }
+    void refresh()
+    {
+        for (auto i : soldiers) {
+            if (!i->getIsDead()) {
+                i->refresh();
+            }
+        }
+    }
+    int getTeam()
+    {
+        return team;
     }
     bool getIsmoving()
     {
