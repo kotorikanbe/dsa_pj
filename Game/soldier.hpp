@@ -1,4 +1,5 @@
 #pragma once
+#include "getshade.h"
 #include "soldier_base.hpp"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
@@ -15,7 +16,6 @@ private:
     int steps_m;
     bool isMoving;
     int count_m;
-
     uint8_t team; // 0 is red 1 is blue
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
     {
@@ -74,6 +74,9 @@ public:
         m_vertices.resize(500 * 6);
         m_shapes.clear();
         for (auto i : soldiers) {
+            if (team == 1 && getShade(i->getPosition())) {
+                continue;
+            }
             if (!i->getIsDead()) {
                 sf::Vector2u position = i->getPosition();
                 sf::Vertex triangles[6];

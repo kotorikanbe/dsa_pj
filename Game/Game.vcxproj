@@ -161,6 +161,7 @@
     <ClInclude Include="castle.hpp" />
     <ClInclude Include="components.hpp" />
     <ClInclude Include="game.hpp" />
+    <ClInclude Include="getshade.h" />
     <ClInclude Include="map.hpp" />
     <ClInclude Include="shade.hpp" />
     <ClInclude Include="soldier.hpp" />

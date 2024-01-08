@@ -31,7 +31,7 @@ public:
         , red_soldier(new Soldier_entity(0))
         , render_thread(&Game::render, this)
         , mouse_thread(&Game::handle_mouse, this)
-        , shade(new Shade(*red_soldier))
+        //, shade(new Shade(*red_soldier))
         , ui(new Ui)
         , value(5)
         , blue_castle(new Castle())
@@ -43,6 +43,7 @@ public:
         this->state = State::Regular;
         under = Under_component::getInstance(red_soldier, blue_soldier);
         up = Up_component::getInstance(under);
+        shade = Shade::getInstance(*red_soldier);
         blue_castle->setTeam(1);
         red_castle->setTeam(0);
         blue_blood = new Castle_blood(blue_castle);
@@ -109,7 +110,7 @@ public:
     void handle_mouse()
     {
         // for test
-        blue_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(1, 19), left);
+        blue_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(38, 19), left);
         red_soldier->addSoldier(Order::CASTER, sf::Vector2u(38, 18), right);
         while (1) {
             if (!mouse_event.empty()) {

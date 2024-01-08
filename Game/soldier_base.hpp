@@ -265,7 +265,7 @@ public:
     void attack(Soldier& enemy) override
     {
         if (!this->getisattacked()) {
-            // this->setisattacked(true);
+            this->setisattacked(true);
             enemy.setIsUnderAttack(true);
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {

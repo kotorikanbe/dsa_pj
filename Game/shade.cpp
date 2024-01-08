@@ -1,4 +1,4 @@
-#pragma once
+#include "shade.hpp"
 #include "soldier.hpp"
 #include <array>
 class Shade : public sf::Drawable, public sf::Transformable {
@@ -77,9 +77,5 @@ public:
         return shade[position.x][position.y];
     }
 };
-int getShade(sf::Vector2u position)
-{
-    return Shade::getShade(position);
-}
 std::vector<Soldier*>* Shade::soldiers;
 std::array<std::array<int, 30>, 40> Shade::shade;
