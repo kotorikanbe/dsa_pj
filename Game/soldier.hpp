@@ -74,9 +74,6 @@ public:
         m_vertices.resize(500 * 6);
         m_shapes.clear();
         for (auto i : soldiers) {
-            /*if (team == 1 && getShade(i->getPosition())) {
-                continue;
-            }*/
             if (!i->getIsDead()) {
                 sf::Vector2u position = i->getPosition();
                 sf::Vertex triangles[6];
@@ -98,11 +95,15 @@ public:
                     default:
                         break;
                     }
-                    double tmp = static_cast<double>(count_m) / 5.0 * static_cast<double>(steps_m) * 32.0;
+                    double tmp = static_cast<double>(count_m) / 15.0 * static_cast<double>(steps_m) * 32.0;
                     sf::RectangleShape shape(sf::Vector2f(32.0 * static_cast<double>(i->getHealth()) / static_cast<double>(getMaxhealth(i->getLabel())), 2.0));
                     shape.setFillColor(team ? sf::Color::Blue : sf::Color::Red);
                     shape.setPosition(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
-                    m_shapes.push_back(shape);
+                    if (team == 1 && getShade(i->getPosition())) {
+                        ;
+                    } else {
+                        m_shapes.push_back(shape);
+                    }
                     triangles[0].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
                     triangles[1].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp + 32, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp);
                     triangles[2].position = sf::Vector2f(static_cast<double>(position.x * 32) + static_cast<double>(tmp_x) * tmp, static_cast<double>(position.y * 32) + static_cast<double>(tmp_y) * tmp + 32);
@@ -120,7 +121,7 @@ public:
                     triangles[3].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64 + 64);
                     triangles[4].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64);
                     triangles[5].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64 + 64);
-                    if (count_m == 6) {
+                    if (count_m == 16) {
                         isMoving = false;
                         i->move(steps_m, direction_m);
                         count_m = 0;
@@ -130,7 +131,11 @@ public:
                     sf::RectangleShape shape(sf::Vector2f(32.0 * static_cast<double>(i->getHealth()) / static_cast<double>(getMaxhealth(i->getLabel())), 2.0));
                     shape.setFillColor(team ? sf::Color::Blue : sf::Color::Red);
                     shape.setPosition(position.x * 32, position.y * 32);
-                    m_shapes.push_back(shape);
+                    if (team == 1 && getShade(i->getPosition())) {
+                        ;
+                    } else {
+                        m_shapes.push_back(shape);
+                    }
                     triangles[0].position = sf::Vector2f(position.x * 32, position.y * 32);
                     triangles[1].position = sf::Vector2f(position.x * 32 + 32, position.y * 32);
                     triangles[2].position = sf::Vector2f(position.x * 32, position.y * 32 + 32);
@@ -146,6 +151,9 @@ public:
                     triangles[3].texCoords = sf::Vector2f(label * 256 + phase * 64, direction * 64 + 64);
                     triangles[4].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64);
                     triangles[5].texCoords = sf::Vector2f(label * 256 + phase * 64 + 64, direction * 64 + 64);
+                }
+                if (team == 1 && getShade(i->getPosition())) {
+                    continue;
                 }
                 m_vertices.append(triangles[0]);
                 m_vertices.append(triangles[1]);
@@ -209,7 +217,7 @@ public:
     bool findSoldier(sf::Vector2u position)
     {
         auto found = std::find_if(soldiers.begin(), soldiers.end(), [=](Soldier* i) { return i->getPosition() == position; });
-        if (found != soldiers.end()) {
+        if (found != soldiers.end() && (!(*found)->getIsDead())) {
             return true;
         } else {
             return false;

@@ -330,10 +330,26 @@ public:
         if (under_components.empty()) {
             return nullptr;
         }
+        int i = 0;
+        for (i = 0; i < under_components.size(); i++) {
+            if (under_components[i].color == sf::Color::Blue) {
+                break;
+            }
+        }
+        if (i == under_components.size()) {
+            return nullptr;
+        }
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<int> dis(0, under_components.size() - 1);
-        return &under_components[dis(gen)];
+        int tmp;
+        while (1) {
+            tmp = dis(gen);
+            if (under_components[tmp].color == sf::Color::Blue) {
+                break;
+            }
+        }
+        return &under_components[tmp];
     }
     static bool findComponent(sf::Vector2u position)
     {

@@ -104,10 +104,10 @@ public:
             window.draw(*red_blood);
             if (state == State::AI) {
                 text.setString("AI");
-                std::cout << "AI" << std::endl;
+                /*std::cout << "AI" << std::endl;*/
             } else {
                 text.setString("Player");
-                std::cout << "Player" << std::endl;
+                /*std::cout << "Player" << std::endl;*/
             }
             window.draw(text);
             if (GameOver) {
@@ -146,9 +146,9 @@ public:
         while (blue_value) {
             under->update();
             int order = soldier_gen(gen);
-            if (blue_soldier->soldiers.size() >= 2) {
+            /*if (blue_soldier->soldiers.size() >= 2) {
                 break;
-            }
+            }*/
             if (blue_value >= Soldier::getValue(static_cast<Order>(order))) {
                 int x = x_gen(gen);
                 int y;
@@ -181,8 +181,8 @@ public:
                         i->attack(*attack_target);
                     }
                 }
-                under->update();
-                up->update();
+                // under->update();
+                // up->update();
                 Component* tmp = under->getRandom();
                 int first, second;
                 first = static_cast<int>(tmp->position.x) - static_cast<int>(i->getPosition().x);
@@ -238,11 +238,11 @@ public:
     void handle_mouse()
     {
         // for test
-        red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(38, 19), left);
+        /*red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(38, 19), left);
         blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(0, 16), right);
         red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(39, 19), left);
         red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(37, 19), left);
-        blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(1, 16), right);
+        blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(1, 16), right);*/
         while (1) {
             if (GameOver) {
                 break;
