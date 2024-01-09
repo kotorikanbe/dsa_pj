@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Audio.hpp>
 #include <SFML/System/Vector2.hpp>
 enum Direction {
     down,
@@ -35,6 +36,8 @@ private
     bool isCastle;
 
 public:
+    static sf::SoundBuffer buffer;
+    static sf::Sound sound;
     static int getValue(Order label)
     {
         switch (label) {
@@ -236,6 +239,8 @@ public:
     }
     virtual void attack(Soldier& enemy) = 0;
 };
+sf::SoundBuffer Soldier::buffer;
+sf::Sound Soldier::sound;
 class Infantry : public Soldier {
 public:
     Infantry(sf::Vector2u position, Direction direction, int health = 1000, int damage = 325, int range = 1, int view = 5, int defense_p = 50, int defense_m = 30, int cost = 1, Order label = INFANTRY)
@@ -249,6 +254,7 @@ public:
             this->setisattacked(true);
             enemy.setIsUnderAttack(true);
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
+            Soldier::sound.play();
             if (enemy.getHealth() <= 0) {
                 enemy.setIsDead(true);
             }
@@ -267,6 +273,7 @@ public:
         if (!this->getisattacked()) {
             this->setisattacked(true);
             enemy.setIsUnderAttack(true);
+            Soldier::sound.play();
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_m()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {
                 enemy.setIsDead(true);
@@ -286,6 +293,7 @@ public:
         if (!this->getisattacked()) {
             this->setisattacked(true);
             enemy.setIsUnderAttack(true);
+            Soldier::sound.play();
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {
                 enemy.setIsDead(true);
@@ -305,6 +313,7 @@ public:
         if (!this->getisattacked()) {
             this->setisattacked(true);
             enemy.setIsUnderAttack(true);
+            Soldier::sound.play();
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {
                 enemy.setIsDead(true);
@@ -324,6 +333,7 @@ public:
         if (!this->getisattacked()) {
             this->setisattacked(true);
             enemy.setIsUnderAttack(true);
+            Soldier::sound.play();
             enemy.setHealth(enemy.getHealth() - static_cast<int>((1.0 - static_cast<double>(enemy.getDefense_p()) / 100.0) * this->getDamage()));
             if (enemy.getHealth() <= 0) {
                 enemy.setIsDead(true);

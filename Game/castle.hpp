@@ -33,6 +33,7 @@ public:
                 return false;
             }
         }
+        return false;
     }
 };
 class Castle_blood : public sf::Drawable, public sf::Transformable {

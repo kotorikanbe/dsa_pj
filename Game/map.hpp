@@ -100,6 +100,7 @@ public:
         m_sprite_red.setTexture(base_red);
         m_sprite_red.setPosition(sf::Vector2f(0.0, 416.0));
         m_sprite_blue.setPosition(sf::Vector2f(1184.0, 416.0));
+        return true;
     }
     /*static std::array<std::array<Map_node, 30>, 40>& getData()
     {

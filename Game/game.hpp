@@ -69,6 +69,8 @@ public:
         S_victory.setOrigin(S_victory.getLocalBounds().width / 2, S_victory.getLocalBounds().height / 2);
         S_defeat.setPosition(880, 480);
         S_victory.setPosition(880, 480);
+        Soldier::buffer.loadFromFile("attack.wav");
+        Soldier::sound.setBuffer(Soldier::buffer);
     }
     ~Game()
     {
@@ -238,11 +240,11 @@ public:
     void handle_mouse()
     {
         // for test
-        /*red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(38, 19), left);
-        blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(0, 16), right);
-        red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(39, 19), left);
-        red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(37, 19), left);
-        blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(1, 16), right);*/
+        red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(38, 19), left);
+        blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(39, 19), right);
+        // red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(39, 19), left);
+        // red_soldier->addSoldier(Order::BERSERKER, sf::Vector2u(37, 19), left);
+        // blue_soldier->addSoldier(Order::CASTER, sf::Vector2u(1, 16), right);
         while (1) {
             if (GameOver) {
                 break;
